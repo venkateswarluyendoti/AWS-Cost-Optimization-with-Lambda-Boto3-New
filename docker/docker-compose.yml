@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+  lambda:
+    build: .
+    volumes:
+      - ./lambda:/var/task
+    environment:
+      - RETENTION_DAYS=7
+      - SNS_TOPIC_ARN=arn:aws:sns:ap-south-1:123456789012:snapshot_alerts

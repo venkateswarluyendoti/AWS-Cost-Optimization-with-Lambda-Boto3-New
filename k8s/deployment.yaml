@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snapshot-cleaner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: snapshot-cleaner
+  template:
+    metadata:
+      labels:
+        app: snapshot-cleaner
+    spec:
+      containers:
+      - name: snapshot-cleaner
+        image: amazon/aws-lambda-python:3.12
+        command: ["snapshot_cleaner.lambda_handler"]
+        env:
+        - name: RETENTION_DAYS
+          value: "7"
+        - name: SNS_TOPIC_ARN
+          value: "arn:aws:sns:ap-south-1:123456789012:snapshot_alerts"
