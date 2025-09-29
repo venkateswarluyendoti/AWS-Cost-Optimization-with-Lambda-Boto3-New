@@ -4,7 +4,7 @@ provider "aws" {
 
 # Lambda Function
 resource "aws_lambda_function" "snapshot_cleaner" {
-  filename      = "docker/lambda.zip"    # Make sure this is a ZIP file
+  filename      = "..docker/lambda.zip"    # Make sure this is a ZIP file
   function_name = "snapshot_cleaner"
   role          = aws_iam_role.lambda_exec.arn
   handler       = "snapshot_cleaner.lambda_handler"
@@ -100,8 +100,8 @@ resource "aws_budgets_budget" "snapshot_budget" {
   budget_type       = "COST"
   limit_amount      = "2.0"
   limit_unit        = "USD"
-  time_period_start = "2025-09-29_00:00:00"   # Correct format
-  time_period_end   = "2025-10-29_00:00:00"
+  time_period_start = "2025-09-29_00:00"   # Correct format
+  time_period_end   = "2025-10-29_00:00"
   time_unit         = "MONTHLY"
 
   notification {
