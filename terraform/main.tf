@@ -9,7 +9,7 @@ resource "aws_lambda_function" "snapshot_cleaner" {
   role          = aws_iam_role.lambda_exec.arn
   handler       = "snapshot_cleaner.lambda_handler"
   runtime       = "python3.12"
-  environment   = {
+  environment {
     variables = {
       RETENTION_DAYS = 7
       SNS_TOPIC_ARN  = aws_sns_topic.alerts.arn
@@ -96,8 +96,8 @@ resource "aws_budgets_budget" "snapshot_budget" {
   budget_type       = "COST"
   limit_amount      = "2.0"
   limit_unit        = "USD"
-  time_period_start = "2025-08-28_00:00"
-  time_period_end   = "2025-09-28_00:00"
+  time_period_start = "2025-09-29_00:00"
+  time_period_end   = "2025-10-29_00:00"
   time_unit         = "MONTHLY"
 
   notification {
