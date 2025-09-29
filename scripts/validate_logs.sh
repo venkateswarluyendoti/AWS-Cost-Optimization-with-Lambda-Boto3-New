@@ -1,14 +1,14 @@
 #!/bin/bash
 
 LOG_GROUP="/aws/lambda/snapshot_cleaner"
-KEYWORD="Deleted snapshot"
+KEYWORD="Deleting"
 REGION="ap-south-1"
+MAX_WAIT=30  # Max seconds to wait for logs
 
 echo "🔎 Validating logs for Lambda function: snapshot_cleaner..."
 
 # 1. Check if log group exists
 aws logs describe-log-groups --log-group-name-prefix "$LOG_GROUP" --region $REGION --query "logGroups[].logGroupName" --output text | grep -q "$LOG_GROUP"
-
 if [ $? -ne 0 ]; then
     echo "⚠️ Log group $LOG_GROUP not found. Creating it..."
     aws logs create-log-group --log-group-name "$LOG_GROUP" --region $REGION
@@ -17,19 +17,28 @@ if [ $? -ne 0 ]; then
     exit 0
 fi
 
-# 2. Get latest log stream
-LOG_STREAM=$(aws logs describe-log-streams \
-    --log-group-name "$LOG_GROUP" \
-    --order-by LastEventTime \
-    --descending \
-    --max-items 1 \
-    --region $REGION \
-    --query "logStreams[0].logStreamName" \
-    --output text)
+# 2. Wait until log stream appears
+WAITED=0
+LOG_STREAM=""
+while [ $WAITED -lt $MAX_WAIT ]; do
+    LOG_STREAM=$(aws logs describe-log-streams \
+        --log-group-name "$LOG_GROUP" \
+        --order-by LastEventTime \
+        --descending \
+        --limit 1 \
+        --region $REGION \
+        --query "logStreams[0].logStreamName" \
+        --output text)
+    if [ "$LOG_STREAM" != "None" ] && [ -n "$LOG_STREAM" ]; then
+        break
+    fi
+    sleep 2
+    WAITED=$((WAITED+2))
+done
 
-if [ "$LOG_STREAM" == "None" ] || [ -z "$LOG_STREAM" ]; then
-    echo "⚠️ No log streams found in $LOG_GROUP. Run the Lambda at least once."
-    exit 0
+if [ -z "$LOG_STREAM" ] || [ "$LOG_STREAM" == "None" ]; then
+    echo "❌ No log streams found in $LOG_GROUP. Run the Lambda at least once."
+    exit 1
 fi
 
 echo "📄 Checking logs in stream: $LOG_STREAM"
