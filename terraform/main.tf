@@ -100,8 +100,8 @@ resource "aws_budgets_budget" "snapshot_budget" {
   budget_type       = "COST"
   limit_amount      = "2.0"
   limit_unit        = "USD"
-  time_period_start = "2025-09-29T00:00:00"   # Correct ISO8601 format
-  time_period_end   = "2025-10-29T00:00:00"
+  time_period_start = "2025-09-29_00:00:00"   # Correct format
+  time_period_end   = "2025-10-29_00:00:00"
   time_unit         = "MONTHLY"
 
   notification {
