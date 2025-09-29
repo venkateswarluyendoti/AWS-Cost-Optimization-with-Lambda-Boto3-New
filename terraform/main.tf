@@ -9,7 +9,7 @@ resource "random_id" "suffix" {
 
 # Lambda Function
 resource "aws_lambda_function" "snapshot_cleaner" {
-  filename      = "../docker/lambda.zip"
+  filename      = "../docker/lambda/lambda.zip"
   function_name = "snapshot_cleaner"
   role          = aws_iam_role.lambda_exec.arn
   handler       = "snapshot_cleaner.lambda_handler"
