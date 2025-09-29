@@ -17,7 +17,7 @@ resource "aws_lambda_function" "snapshot_cleaner" {
 
   environment {
     variables = {
-      RETENTION_DAYS = 7
+      RETENTION_DAYS = 0
       SNS_TOPIC_ARN  = aws_sns_topic.alerts.arn
     }
   }
