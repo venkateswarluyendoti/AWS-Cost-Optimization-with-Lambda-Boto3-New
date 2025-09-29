@@ -9,7 +9,7 @@ resource "aws_lambda_function" "snapshot_cleaner" {
   role          = aws_iam_role.lambda_exec.arn
   handler       = "snapshot_cleaner.lambda_handler"
   runtime       = "python3.12"
-  environment   = {
+  environment {
     variables = {
       RETENTION_DAYS = 7
       SNS_TOPIC_ARN  = aws_sns_topic.alerts.arn
